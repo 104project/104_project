@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateVideocategoryTable extends Migration
+class CreateChannelsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,13 @@ class CreateVideocategoryTable extends Migration
      */
     public function up()
     {
-        Schema::create('videocategory', function (Blueprint $table) {
-            $table->increments('id'); //影片分類編號
-            $table->string('tag',20); //分類標籤(頻道名稱)
+        Schema::create('channels', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('user_id')->unsigned(); //頻道創建者
+            $table->string('channel_name',20); //頻道名稱
             $table->string('description', 300); //描述內容
-            $table->string('tag_color',20); //分類標籤(顏色)
-
+            $table->string('channel_color',20); //頻道 分類標籤(顏色)
+            $table->string('photo')->nullable(); //圖片路徑
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ class CreateVideocategoryTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('videocategory');
+        Schema::dropIfExists('channels');
     }
 }

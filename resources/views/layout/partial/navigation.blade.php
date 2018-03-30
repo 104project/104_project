@@ -35,6 +35,7 @@
 
                 </ul>
             </li>
+            <li><a href="/openchannel"><span>開放式頻道</span></a></li>
             <li><a href="/test"><span>教學案例</span></a></li>
 
             <li><a href="contact.htm"><span>聯絡我們</span></a></li>
@@ -49,7 +50,6 @@
                     <li class="dropdown" >
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color: #26abe2;"><span>Hi， {{ session('user_nickname')}}</span> <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-
                             <li><a href="/user/videos/collect/{{ session('user_id')}}">檢視</a></li>
                             <li><a href="/user/auth/sign-out">登出</a></li>
                         </ul>
@@ -60,9 +60,6 @@
                 @endif
 
             </ul>
-
-
-
 
 
         </div>

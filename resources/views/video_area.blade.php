@@ -28,6 +28,7 @@
     }
 
 </style>
+
     <script type="text/javascript" src="/js/jquery2.min.js"></script>
     <script type="text/javascript" src="/js/theme.js"></script>
 
@@ -55,6 +56,7 @@
             })
 
         })
+
     </script>
 
     @if($errors AND count($errors))
@@ -78,19 +80,18 @@
 
 @endsection
 @section('subscribe')
-
         <a class="layui-btn layui-btn-normal"    href="#13">
-            <i class="layui-icon" style="vertical-align: unset;">&#xe756;</i>訂閱頻道</a>
-
+            <i class="layui-icon" style="vertical-align: unset;">&#xe756;</i>訂閱頻道
+        </a>
 @endsection
 
 @section('category_well')
 
     <div class="well" style="margin-top: 15px; margin-bottom: 1px;border: 5px solid #d3d3d3;">
+        @foreach($Category_color as $color)
+            {{$color ->description}}
+            @endforeach
 
-        工業4.0簡單的說，就是大量運用自動化機器人、感測器物聯網、供應鏈互聯網、銷售及生產大數據分析，以人機協作方式提升全製造價值鏈之生產力及品質。如果以德國西門子在Amberg先進實驗工廠經驗推估，工業4.0化後之生產鏈，可提高其生產價值至原先十倍以上，一般認為將是下一代工業革命之濫觴。
-
-        工業4.0的精神是連結與優化，連結製造相關元素，進行優化，以增進企業競爭力與獲利。日本廠商目標重點在追求「零停機、零待料」，德國工業4.0終極目標則設在相同成本下，達到經濟批量為1的「最大客製化」生產彈性。
     </div>
 
 @endsection
@@ -220,61 +221,65 @@
 
             <div class="filter">
 
-                <nav class="navecation">
-                    <span style="float: left;margin-right: 10px;">排序:</span>
-                    <ul id="navi">
+                    <nav class="navecation">
+                        <span style="float: left;margin-right: 10px;">排序:</span>
+                        <ul id="navi">
 
-                            <li><a class="val1" href="/video/index/{{session('category_tag')}}/time">依發佈時間</a></li>
-                            <li><a class="val2" href="/video/index/{{session('category_tag')}}/views">依觀看人數</a></li>
-                            <li><a class="val3" href="/video/index/{{session('category_tag')}}/likes">依喜愛人數</a></li>
+                                <li><a class="val1" href="/video/index/{{session('category_tag')}}/time">依發佈時間</a></li>
+                                <li><a class="val2" href="/video/index/{{session('category_tag')}}/views">依觀看人數</a></li>
+                                <li><a class="val3" href="/video/index/{{session('category_tag')}}/likes">依喜愛人數</a></li>
 
-                    </ul>
-                </nav>
-
-
-
-
-            </div>
-
-
-            <hr class="invisible" />
-
-                <div class="row" style="display: flex;flex-wrap: wrap;">
-                    @foreach($Videos as $videos)
-                        <article class="col-md-4 video-item">
-
-                            <a href="/video/{{ $videos->category }}/{{ $videos->id }}" class="video-prev video-prev-small">
-                                <img  width="100%" height="100%" src='http://img.youtube.com/vi/{{ $videos->video_id }}/mqdefault.jpg'></a>
-                            <h3 class="video-title"><a href="/test3"> {{ $videos->title }}</a></h3>
-                            <div class="row video-params">
-                                <div class="col-md-8">
-                                    Author：<b> {{ $videos->author }}</b>
-                                </div>
-                                <div class="col-md-4 text-right">
-                                    Views：<b> {{ $videos->views_num }}</b>
-                                </div>
-                            </div>
-                            <div class="row video-params">
-                                <div class="col-md-7">
-                                    Date：<b>{{ $videos->updated_at }}</b>
-                                </div>
-                                <div class="col-md-5 text-right">
-                                    Likes：<b>{{ $videos->likes_num }}</b>
-                                </div>
-                            </div>
-                            @foreach($Category_color as $color)
-                            <div class="row video-{{$color->tag_color}}-params">
-                            @endforeach
-                                <div class="col-md-12">
-                                    <b>#{{ $videos->category }}</b>
-
-                                </div>
-                            </div>
-
-                        </article>
-                    @endforeach
+                        </ul>
+                    </nav>
 
                 </div>
+
+
+                <hr class="invisible" />
+
+                    <div class="row" style="display: flex;flex-wrap: wrap;">
+                        @foreach($Videos as $videos)
+                            <article class="col-md-4 video-item">
+
+                                <a href="/video/{{ $videos->category }}/{{ $videos->id }}" class="video-prev video-prev-small">
+                                    <img  width="100%" height="100%" src='http://img.youtube.com/vi/{{ $videos->video_id }}/mqdefault.jpg'>
+                                </a>
+
+                                <h3 class="video-title">
+                                    <a href="/test3"> {{ $videos->title }}</a>
+                                </h3>
+
+                                <div class="row video-params">
+                                    <div class="col-md-8">
+                                        發佈者：<b> {{ $videos->author }}</b>
+                                    </div>
+                                    <div class="col-md-4 text-right">
+                                        瀏覽人數：<b> {{ $videos->views_num }}</b>
+                                    </div>
+                                </div>
+
+                                <div class="row video-params">
+                                    <div class="col-md-7">
+                                        建立日期：<b>{{ date('Y-m-d', strtotime($videos->updated_at))}}</b>
+                                    </div>
+                                    <div class="col-md-5 text-right">
+                                        喜愛人數：<b>{{ $videos->likes_num }}</b>
+                                    </div>
+                                </div>
+
+                                @foreach($Category_color as $color)
+                                <div class="row video-{{$color->tag_color}}-params">
+                                @endforeach
+                                    <div class="col-md-12">
+                                        <b>#{{ $videos->category }}</b>
+                                    </div>
+                                </div>
+
+                            </article>
+                        @endforeach
+                    </div>
+
+
 
                 <!-- Pagination -->
 
@@ -283,14 +288,10 @@
 
         </div>
     </section>
+
 @endsection
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
-
-
-
-
-
 <script type="text/javascript" src="/layui/layui.js"></script>
 
 

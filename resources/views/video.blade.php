@@ -2,6 +2,8 @@
 
 @section('title', $title)
 
+
+
 @section('content')
 
 <!-- Video: film view -->
@@ -60,7 +62,7 @@
 
                 <p class="video-params">
                     發佈者：<b>{{ $video->author }}</b> <br />
-                    建立日期：<b>{{ $video->updated_at	 }}</b> <br />
+                    建立日期：<b>{{ date('Y-m-d', strtotime($video->updated_at))	 }}</b> <br />
                     頻道：<b>{{ $video->category	 }}</b> <br />
                     瀏覽人數：<b>{{ $video->views_num }}</b> <br />
                     喜愛人數：<b>{{ $Video_likes_num }}</b>

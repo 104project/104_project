@@ -50,8 +50,10 @@ class VideosController extends Controller
         }
 
         $Videos_Category = DB::table('videocategory')->get();
+        $Category_color = DB::table('videocategory')->where('tag', '=', $category_tag)->get();
         $subject = '「'.$category_tag.'」';
-        $binding = ['title' => '精選頻道' , 'subject' =>  $subject, 'Videos' => $Videos, 'Videos_Category' => $Videos_Category ];
+        $binding = ['title' => '精選頻道' , 'subject' =>  $subject, 'Videos' => $Videos,
+            'Videos_Category' => $Videos_Category , 'Category_color' => $Category_color];
 
         session()->put('category_tag', $category_tag);
         return view('video_area', $binding);
@@ -124,11 +126,11 @@ class VideosController extends Controller
         $video_like_limit = DB::table('videos_likes')->where('user_id', '=', session('user_id'))->where('like_video_id', '=', $video_id)->count();
 
         //取得標籤顏色的分類id
-        $Videos = DB::table('videos')->where('video_id', '=', $video_id);
-        foreach ($Videos as $video_category){
-            $category = $video_category->category;
+        $Videos = DB::table('videos')->where('id', '=', $video_id)->get();
+        foreach ($Videos as $category){
+            $category = $category->category;
         }
-        $Videocategory = DB::table('videocategory')->where('tag', '=',$category);
+        $Videocategory = DB::table('videocategory')->where('tag', '=',$category)->get();
         foreach ($Videocategory as $category){
             $get_tag_color = $category->id;
         }
@@ -219,27 +221,6 @@ class VideosController extends Controller
     }
 
 
-    // 會員點擊collect影片
-    public function video_test($video_id){
-
-
-        //取得標籤顏色的分類id
-        $Videos = DB::table('videos')->where('id', '=', $video_id)->get();
-        foreach ($Videos as $category){
-            $category = $category->category;
-        }
-        $Videocategory = DB::table('videocategory')->where('tag', '=',$category)->get();
-        foreach ($Videocategory as $category){
-            $get_tag_color = $category->id;
-            echo $get_tag_color;
-        }
-
-
-
-
-
-    }
-
     // 會員取消collect的影片(discollect)
     public function video_discollectProcess($video_id){
         //查詢使用者喜愛的影片數量(至多一筆資料)
@@ -320,13 +301,55 @@ class VideosController extends Controller
     // 會員點擊likes影片
     public function user_likes_videosPage($user_id){
         $Videos_Category = DB::table('videocategory')->get();
-        $User_Collect_Videos =  DB::table('videos_collects')
-            ->join('videos', 'videos.id', '=', 'videos_collects.collect_video_id')
-            ->join('users', 'users.id', '=', 'videos_collects.user_id')
+        $User_likes_Videos =  DB::table('videos_collects')
+            ->join('videocategory', 'videocategory.id', '=', 'videos_likes.tag_color_id')
+            ->join('videos', 'videos.id', '=', 'videos_likes.like_video_id')
+            ->join('users', 'users.id', '=', 'videos_likes.user_id')
+            ->where('videos_likes.user_id', '=', $user_id)
             ->get();
 
-        $binding = ['title' => '收藏影片' , 'subject' => $user_id.'的收藏', 'User_Collect_Videos' => $User_Collect_Videos, 'Videos_Category' => $Videos_Category];
+        $binding = ['title' => '收藏影片' , 'subject' => $user_id.'的收藏', 'User_likes_Videos' => $User_likes_Videos, 'Videos_Category' => $Videos_Category];
         session()->put('category_manu', 'likes');
+        // 重新導向到影片區
+        return view('collect_videos',$binding);
+
+    }
+
+    // 會員點擊collect影片
+    public function user_sort_videosPage($sort,$user_id){
+        if($sort == 'collect' ){
+            $User_Videos =  DB::table('videos_collects')
+                ->join('videocategory', 'videocategory.id', '=', 'videos_collects.tag_color_id')
+                ->join('videos', 'videos.id', '=', 'videos_collects.collect_video_id')
+                ->join('users', 'users.id', '=', 'videos_collects.user_id')
+                ->where('videos_collects.user_id', '=', $user_id)
+                    ->get();
+            session()->put('category_manu', 'collect');
+
+        }elseif ($sort == 'likes'){
+            $User_Videos =  DB::table('videos_likes')
+                ->join('videocategory', 'videocategory.id', '=', 'videos_likes.tag_color_id')
+                ->join('videos', 'videos.id', '=', 'videos_likes.like_video_id')
+                ->join('users', 'users.id', '=', 'videos_likes.user_id')
+                ->where('videos_likes.user_id', '=', $user_id)
+                ->get();
+            session()->put('category_manu', 'likes');
+        }elseif ($sort == 'subscribe'){
+
+        }
+
+
+        $Videos_Category = DB::table('videocategory')->get();
+
+
+        $User_data =  DB::table('users')->where('id', '=', $user_id)->get();
+
+        foreach ($User_data as $data){
+            $user_nikename = $data->nickname;
+        }
+
+        $binding = ['title' => '檢視影片' , 'subject' => '『'.$user_nikename.'』'.'的影片', 'User_Videos' => $User_Videos
+           ,'Videos_Category' => $Videos_Category];
         // 重新導向到影片區
         return view('collect_videos',$binding);
 
@@ -347,7 +370,7 @@ class VideosController extends Controller
         foreach ($User_data as $data){
             $user_nikename = $data->nickname;
         }
-        $binding = ['title' => '收藏影片' , 'subject' => '', 'User_Collect_Videos' => $User_Collect_Videos, 'Videos_Category' => $Videos_Category];
+        $binding = ['title' => '收藏影片' , 'subject' => '『'.$user_nikename.'』'.'的收藏', 'User_Collect_Videos' => $User_Collect_Videos, 'Videos_Category' => $Videos_Category];
         session()->put('category_manu', 'collect');
         // 重新導向到影片區
         return view('collect_videos',$binding);
